@@ -91,20 +91,6 @@
                        ]" />
                    </Switch>
                </div>
-
-               <!-- Reset After Click (ResetWhenSessionUnlock) -->
-               <div class="group border-l-4 border-transparent px-3 py-2 flex items-center justify-between text-sm font-medium text-gray-900 dark:text-gray-100 hover:bg-gray-50 dark:hover:bg-gray-700">
-                   <span class="whitespace-normal">{{ t('resetWhenSessionUnlock') }}</span>
-                    <Switch v-model="settings.ResetWhenSessionUnlock" @update:modelValue="saveSettings" :class="[
-                       settings.ResetWhenSessionUnlock ? 'bg-teal-500' : 'bg-gray-200',
-                       'ml-4 relative inline-flex flex-shrink-0 h-5 w-9 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500'
-                   ]">
-                       <span aria-hidden="true" :class="[
-                           settings.ResetWhenSessionUnlock ? 'translate-x-4' : 'translate-x-0',
-                           'inline-block h-4 w-4 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200'
-                       ]" />
-                   </Switch>
-               </div>
                
                <!-- Action Buttons -->
                <div class="flex flex-wrap gap-2 mt-4">

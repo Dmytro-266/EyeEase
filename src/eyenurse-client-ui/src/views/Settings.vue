@@ -16,17 +16,28 @@
           </div>
         </div>
         <ul role="list" class="mt-2 divide-y divide-gray-200 dark:divide-gray-700">
-          <li class="py-4 flex items-center justify-between">
+          <SwitchGroup as="li" class="py-4 flex items-center justify-between">
             <div class="flex flex-col">
               <SwitchLabel as="p" class="text-sm font-medium text-gray-900 dark:text-gray-100" passive>
                 {{ t("resetWhenSessionUnlock") }}
               </SwitchLabel>
             </div>
-             <input type="text" v-if="settings.ResetWhenSessionUnlock" @blur="saveSettings"
+            <div class="flex items-center">
+              <input type="text" v-if="settings.ResetWhenSessionUnlock" @blur="saveSettings"
                 v-model="settings.ResetTimeout"
                 class="w-28 text-center focus:ring-teal-500 focus:border-teal-500 block px-5 sm:text-sm border-gray-300 rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600"
                 placeholder="HH:mm:ss" />
-          </li>
+              <Switch @blur="saveSettings" v-model="settings.ResetWhenSessionUnlock" :class="[
+                settings.ResetWhenSessionUnlock ? 'bg-teal-500' : 'bg-gray-200',
+                'ml-4 relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500',
+              ]">
+                <span aria-hidden="true" :class="[
+                  settings.ResetWhenSessionUnlock ? 'translate-x-5' : 'translate-x-0',
+                  'inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200',
+                ]" />
+              </Switch>
+            </div>
+          </SwitchGroup>
           <li class="py-4 flex items-center justify-between">
             <div class="flex flex-col">
               <p class="text-sm font-medium text-gray-900 dark:text-gray-100">
