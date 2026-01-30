@@ -33,7 +33,7 @@ namespace EyeNurse.Services
             _configService = configService;
             _hotkeyService = hotkeyService;
             string exePath = Assembly.GetEntryAssembly()!.Location.Replace(".dll", ".exe");
-            _desktopStartupHelper = new("Eye Nurse 3", exePath);
+            _desktopStartupHelper = new("EyeEase", exePath);
         }
 
         #endregion

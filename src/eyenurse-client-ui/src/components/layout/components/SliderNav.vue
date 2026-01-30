@@ -14,13 +14,14 @@
     >
       <div class="relative max-w-xs w-full pt-5 pb-4 flex-1 flex flex-col">
         <div class="flex-row px-4 flex items-center">
-          <a class="flex-1">
+          <a class="flex-1 flex items-center gap-2">
             <img
-              :src="`/logo.${$i18n.locale}.svg`"
-              width="43"
-              height="43"
-              class="h-8 w-auto"
+              src="/icon.png"
+              width="96"
+              height="96"
+              class="h-24 w-24"
             />
+            <span class="text-lg font-semibold text-gray-800 dark:text-gray-100">EyeEase</span>
           </a>
           <svg
             @click="emit('onOpenChanged', false)"

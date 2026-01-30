@@ -10,7 +10,7 @@
     <Description>https://eyenurse.giantapp.cn</Description>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Nullable>enable</Nullable>
-    <AssemblyName>Eye Nurse 3</AssemblyName>
+    <AssemblyName>EyeEase</AssemblyName>
     <ApplicationIcon>Assets\Img\logo.ico</ApplicationIcon>
   </PropertyGroup>
 
