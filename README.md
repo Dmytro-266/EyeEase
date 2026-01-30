@@ -1,31 +1,56 @@
-# 眼睛护士
- 一个小软件提醒你保护视力
- ---
-# 下载
-[微软商店](https://apps.microsoft.com/store/detail/eye-nurse-2/XP9K4SFKVKX9SS)  
-[阿里云盘](https://www.aliyundrive.com/s/J3qUQHd984u/folder/64782391184c2ddb985441ef8b7d47ec950ce88f)  
-[百度网盘](https://pan.baidu.com/s/1aKHiv50gYdT6y1QSI40a3A?pwd=gapp&_at_=1660812362041#list/path=%2F%E5%B7%A8%E5%BA%94%E5%8F%91%E5%B8%83%2F%E7%9C%BC%E7%9D%9B%E6%8A%A4%E5%A3%AB&parentPath=%2F%E5%B7%A8%E5%BA%94%E5%8F%91%E5%B8%83)
+# EyeEase
 
-# 功能
-定时锁屏，休息眼睛防止你座在椅子上一整天  
-当然可以手动解除，但我建议你最好不要    
+**EyeEase** (formerly Eye Nurse) is a modern, unobtrusive application designed to help you protect your eyesight and handle computer fatigue. It reminds you to take regular breaks, enforcing rest periods to prevent eye strain and repetitive strain injury (RSI).
 
-# 截图
-![image](https://user-images.githubusercontent.com/80653/182538644-1e90698e-cec6-4885-80c2-ec86c6048813.png)
-![image](https://user-images.githubusercontent.com/80653/182538353-292c0666-3dbd-4de7-8e78-cacde126f398.png)
-![image](https://user-images.githubusercontent.com/80653/182538495-6ab4129a-5ef3-45ac-b6f0-6769a531db59.png)
+![EyeEase Logo](src/eyenurse-client-ui/public/icon.png)
 
+## Features
 
-# 源码
-https://github.com/DaZiYuan/eye-nurse  
-https://gitee.com/DaZiYuan/eye-nurse
+-   **Smart Break Reminders**: Automatically locks the screen or notifies you when it's time to rest.
+-   **Strict & Flexible Modes**: Choose whether you can skip breaks or must respect the timer.
+-   **Modern User Interface**: A completely redesigned, clean UI built with Vue.js.
+-   **Dark Mode**: Fully supported dark theme for comfortable use at night.
+-   **Customizable**:
+    -   Set work and rest durations.
+    -   Configure hotkeys for pausing/resetting the timer.
+    -   "Short Rest" (Rest Now) feature for immediate breaks.
+-   **Unobtrusive**: Runs quietly in the system tray.
+-   **Multi-language Support**: English, Chinese, and Ukrainian.
 
-# 2.0和1.0的区别
-- 重新开发，wpf+webview2实现
-- 暂时取消提示音，1.0很多人不喜欢那个闹铃声
-- 同时支持中文和英文，帮助不同地区的电脑使用者
+## Technology Stack
 
-# 欢迎任何语言的贡献，中文/英文/或者任何语言~
-- PR
-- 想法
-- Bug
+-   **Backend**: .NET 6 (WPF)
+-   **Frontend**: Vue.js 3 + Vite + Tailwind CSS
+-   **Integration**: Microsoft WebView2
+
+## Getting Started
+
+1.  Download the latest release.
+2.  Install and run `EyeEase.exe`.
+3.  Configure your preferred settings via the intuitive sidebar menu.
+
+## Development
+
+### Prerequisites
+-   Node.js & npm
+-   .NET 6 SDK
+-   Visual Studio or VS Code
+
+### Build
+1.  **Frontend**:
+    ```bash
+    cd src/eyenurse-client-ui
+    npm install
+    npm run build
+    ```
+    This will copy the built UI assets to the WPF project assets folder.
+
+2.  **Backend**:
+    Open the solution in Visual Studio and build `EyeNurse` project, or run:
+    ```bash
+    dotnet build -c Release
+    ```
+
+## License
+
+MIT License
