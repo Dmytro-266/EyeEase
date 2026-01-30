@@ -18,6 +18,9 @@ namespace EyeNurse
         private NotifyIcon? _notifyIcon;
         private MenuItem? _aboutMenuItem;
         private MenuItem? _settingMenuItem;
+        private MenuItem? _darkModeMenuItem;
+        private MenuItem? _runWhenStartsMenuItem;
+        private MenuItem? _resetWhenUnlockMenuItem;
         private MenuItem? _pauseMenuItem;
         private MenuItem? _resumeMenuItem;
         private MenuItem? _resetMenuItem;
@@ -54,13 +57,22 @@ namespace EyeNurse
 
             Menu = new()
             {
-                Width = 150
+                Width = 200
             };
 
             _aboutMenuItem = new MenuItem();
             _aboutMenuItem.Click += AboutMenuItem_Click;
             _settingMenuItem = new MenuItem();
             _settingMenuItem.Click += SettingMenuItem_Click;
+            
+            // Quick settings toggles
+            _darkModeMenuItem = new MenuItem() { IsCheckable = true };
+            _darkModeMenuItem.Click += DarkModeMenuItem_Click;
+            _runWhenStartsMenuItem = new MenuItem() { IsCheckable = true };
+            _runWhenStartsMenuItem.Click += RunWhenStartsMenuItem_Click;
+            _resetWhenUnlockMenuItem = new MenuItem() { IsCheckable = true };
+            _resetWhenUnlockMenuItem.Click += ResetWhenUnlockMenuItem_Click;
+            
             _pauseMenuItem = new MenuItem();
             _pauseMenuItem.Click += PauseMenuItem_Click;
             _resumeMenuItem = new MenuItem() { Visibility = Visibility.Collapsed };
@@ -73,6 +85,11 @@ namespace EyeNurse
 
             Menu.Items.Add(_aboutMenuItem);
             Menu.Items.Add(_settingMenuItem);
+            Menu.Items.Add(new Separator());
+            // Quick settings submenu
+            Menu.Items.Add(_darkModeMenuItem);
+            Menu.Items.Add(_runWhenStartsMenuItem);
+            Menu.Items.Add(_resetWhenUnlockMenuItem);
             Menu.Items.Add(new Separator());
             Menu.Items.Add(_pauseMenuItem);
             Menu.Items.Add(_resumeMenuItem);
@@ -96,6 +113,7 @@ namespace EyeNurse
             _notifyIcon.Init();
 
             UpdateNotifyIconText();
+            LoadQuickSettings();
             ShowCountdownWindow();
         }
 
@@ -107,21 +125,84 @@ namespace EyeNurse
 
             _notifyIcon?.Dispatcher.BeginInvoke(() =>
             {
-                if (_aboutMenuItem != null) _aboutMenuItem.Header = LanService.Get("about");
-                if (_settingMenuItem != null) _settingMenuItem.Header = LanService.Get("setting");
-                if (_pauseMenuItem != null) _pauseMenuItem.Header = LanService.Get("pause");
-                if (_resumeMenuItem != null) _resumeMenuItem.Header = LanService.Get("resume");
-                if (_resetMenuItem != null) _resetMenuItem.Header = LanService.Get("reset");
-                if (_restNowMenuItem != null) _restNowMenuItem.Header = LanService.Get("rest_now");
-                if (_exitMenuItem != null) _exitMenuItem.Header = LanService.Get("exit");
+                if (_aboutMenuItem != null) _aboutMenuItem.Header = GetSafeText("about", "About");
+                if (_settingMenuItem != null) _settingMenuItem.Header = GetSafeText("setting", "Settings");
+                if (_darkModeMenuItem != null) _darkModeMenuItem.Header = GetSafeText("dark_mode", "Dark Mode");
+                if (_runWhenStartsMenuItem != null) _runWhenStartsMenuItem.Header = GetSafeText("run_when_starts", "Run When Starts");
+                if (_resetWhenUnlockMenuItem != null) _resetWhenUnlockMenuItem.Header = GetSafeText("reset_when_unlock", "Reset After Unlock");
+                if (_pauseMenuItem != null) _pauseMenuItem.Header = GetSafeText("pause", "Pause");
+                if (_resumeMenuItem != null) _resumeMenuItem.Header = GetSafeText("resume", "Resume");
+                if (_resetMenuItem != null) _resetMenuItem.Header = GetSafeText("reset", "Reset");
+                if (_restNowMenuItem != null) _restNowMenuItem.Header = GetSafeText("rest_now", "Rest Now");
+                if (_exitMenuItem != null) _exitMenuItem.Header = GetSafeText("exit", "Exit");
             });
+        }
+
+        public void RefreshQuickSettings()
+        {
+            LoadQuickSettings();
+        }
+        
+        private string GetSafeText(string key, string fallback)
+        {
+            try
+            {
+                var text = LanService.Get(key);
+                return string.IsNullOrEmpty(text) ? fallback : text;
+            }
+            catch
+            {
+                return fallback;
+            }
         }
 
         #endregion
 
         #region private
+        
+        private void LoadQuickSettings()
+        {
+            var eyeNurseService = IocService.GetService<EyeNurseService>();
+            if (eyeNurseService == null) return;
+            
+            var setting = eyeNurseService.LoadUserConfig<Models.UserConfigs.Setting>();
+            
+            if (_darkModeMenuItem != null) _darkModeMenuItem.IsChecked = setting.DarkMode;
+            if (_runWhenStartsMenuItem != null) _runWhenStartsMenuItem.IsChecked = setting.RunWhenStarts;
+            if (_resetWhenUnlockMenuItem != null) _resetWhenUnlockMenuItem.IsChecked = setting.ResetWhenSessionUnlock;
+        }
+        
+        private void SaveQuickSettings(Action<Models.UserConfigs.Setting> updateAction)
+        {
+            var eyeNurseService = IocService.GetService<EyeNurseService>();
+            if (eyeNurseService == null) return;
+            
+            var setting = eyeNurseService.LoadUserConfig<Models.UserConfigs.Setting>();
+            updateAction(setting);
+            eyeNurseService.SaveUserConfig(setting);
+            eyeNurseService.ApplySetting(setting);
+        }
+        
         #region callback
  
+        private void DarkModeMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var isChecked = _darkModeMenuItem?.IsChecked ?? false;
+            SaveQuickSettings(s => s.DarkMode = isChecked);
+        }
+        
+        private void RunWhenStartsMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var isChecked = _runWhenStartsMenuItem?.IsChecked ?? false;
+            SaveQuickSettings(s => s.RunWhenStarts = isChecked);
+        }
+        
+        private void ResetWhenUnlockMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var isChecked = _resetWhenUnlockMenuItem?.IsChecked ?? false;
+            SaveQuickSettings(s => s.ResetWhenSessionUnlock = isChecked);
+        }
+        
         private void ResetMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var vm = IocService.GetService<EyeNurseViewModel>();

@@ -33,3 +33,27 @@ export async function GetCurrentLanguage() {
 
   return r;
 }
+
+export async function RestNow() {
+  if (!window.chrome.webview) return;
+  const { api } = window.chrome.webview.hostObjects;
+  await api.RestNow();
+}
+
+export async function Pause() {
+  if (!window.chrome.webview) return;
+  const { api } = window.chrome.webview.hostObjects;
+  await api.Pause();
+}
+
+export async function Resume() {
+  if (!window.chrome.webview) return;
+  const { api } = window.chrome.webview.hostObjects;
+  await api.Resume();
+}
+
+export async function Reset() {
+  if (!window.chrome.webview) return;
+  const { api } = window.chrome.webview.hostObjects;
+  await api.Reset();
+}

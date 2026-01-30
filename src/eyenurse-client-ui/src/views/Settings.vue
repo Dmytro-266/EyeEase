@@ -107,23 +107,19 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { onMounted, reactive, ref } from "vue";
+import { onMounted } from "vue";
 import { Switch, SwitchGroup, SwitchLabel } from "@headlessui/vue";
-import type { Setting } from "@/lib/models";
 import { useI18n } from "vue-i18n";
-import * as client from "../lib/client";
-import debounce from "lodash/debounce";
-const settings = reactive<Setting>({});
-const loading = ref(false);
+import { useSettingsStore } from "@/stores/settings";
+import { storeToRefs } from "pinia";
+
+const store = useSettingsStore();
+const { settings, loading } = storeToRefs(store);
 const { t } = useI18n();
 
-const saveSettings = debounce(async () => {
-  loading.value = true;
-  console.log("Saving settings...");
-  var newSettings = await client.SetSettings(settings);
-  Object.assign(settings, newSettings); //更新UI
-  loading.value = false;
-}, 300);
+const saveSettings = () => {
+    store.saveSettings();
+};
 
 const recordHotkey = (e: KeyboardEvent) => {
   e.preventDefault();
@@ -134,55 +130,30 @@ const recordHotkey = (e: KeyboardEvent) => {
   if (e.metaKey) parts.push('Win');
 
   let key = e.key;
-  // Handle special cases or formatting if needed
   if (key === ' ') key = 'Space';
   if (key.length === 1) key = key.toUpperCase();
   
-  // Ignore modifiers as the main key
   if (!['Control', 'Shift', 'Alt', 'Meta'].includes(e.key)) {
-    // If Backspace/Delete, clear
     if (key === 'Backspace' || key === 'Delete') {
-       settings.PauseHotkey = '';
-       saveSettings();
+       if (settings.value.PauseHotkey) {
+           settings.value.PauseHotkey = '';
+           saveSettings();
+       }
        return;
     }
     parts.push(key);
-  } else {
-     // If only modifiers are pressed, we can still show them
-     // but usually we want a combination. 
-     // Let's allow showing incomplete hotkeys (e.g. "Ctrl+") so user knows it's recording
   }
 
-  // If we have at least one part (even just a modifier), update the display
-  // But a valid hotkey usually needs a non-modifier.
-  // We'll just display whatever is pressed.
   if (parts.length > 0) {
-      settings.PauseHotkey = parts.join('+');
-      // Verify if valid hotkey? (e.g. has non-modifier)
-      // We can leave validation to backend or just let it be.
-      // But we probably shouldn't save "Ctrl" as a hotkey.
-      // Let's only save if there is a non-modifier key?
-      // No, let's just update model. User blurs to save.
+      settings.value.PauseHotkey = parts.join('+');
   }
 };
 
 const toggleDarkMode = (val: boolean) => {
-  if (val) {
-    document.documentElement.classList.add('dark');
-  } else {
-    document.documentElement.classList.remove('dark');
-  }
-  saveSettings();
+  store.toggleDarkMode(val);
 };
 
 onMounted(async () => {
-  var tmp = await client.getSettings();
-  console.log(tmp);
-  Object.assign(settings, tmp);
-  if (settings.DarkMode) {
-      document.documentElement.classList.add('dark');
-  } else {
-      document.documentElement.classList.remove('dark');
-  }
+  await store.fetchSettings();
 });
 </script>

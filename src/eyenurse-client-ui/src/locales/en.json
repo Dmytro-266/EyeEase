@@ -12,5 +12,8 @@
   "zh": "简体中文",
   "uk": "Українська",
   "pauseHotkey": "Settings Hotkey",
-  "darkMode": "Dark Mode"
+  "darkMode": "Dark Mode",
+  "rest_now": "Rest Now",
+  "pause": "Pause",
+  "reset": "Reset"
 }

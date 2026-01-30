@@ -10,5 +10,8 @@
   "rest_now": "立刻休息",
   "resting": "休息中...",
   "resume": "恢复",
-  "setting": "设置"
+  "setting": "设置",
+  "dark_mode": "深色模式",
+  "run_when_starts": "开机启动",
+  "reset_when_unlock": "解锁后重置"
 }

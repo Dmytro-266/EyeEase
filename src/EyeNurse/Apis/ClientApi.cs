@@ -74,5 +74,45 @@ namespace EyeNurse.Apis
             _eyeNurseService?.ApplySetting(defaultConfig);
             return json;
         }
+
+        public void RestNow()
+        {
+            var app = IocService.GetService<App>();
+            app?.Dispatcher.Invoke(() =>
+            {
+                var vm = IocService.GetService<ViewModels.EyeNurseViewModel>();
+                vm?.RestNow();
+            });
+        }
+
+        public void Pause()
+        {
+            var app = IocService.GetService<App>();
+            app?.Dispatcher.Invoke(() =>
+            {
+                var vm = IocService.GetService<ViewModels.EyeNurseViewModel>();
+                vm?.Pause();
+            });
+        }
+
+        public void Resume()
+        {
+            var app = IocService.GetService<App>();
+            app?.Dispatcher.Invoke(() =>
+            {
+                var vm = IocService.GetService<ViewModels.EyeNurseViewModel>();
+                vm?.Resume();
+            });
+        }
+
+        public void Reset()
+        {
+            var app = IocService.GetService<App>();
+            app?.Dispatcher.Invoke(() =>
+            {
+                var vm = IocService.GetService<ViewModels.EyeNurseViewModel>();
+                vm?.Reset();
+            });
+        }
     }
 }

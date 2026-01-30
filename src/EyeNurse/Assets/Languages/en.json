@@ -10,5 +10,8 @@
   "rest_now": "Rest now",
   "resting": "Resting...",
   "resume": "Resume",
-  "setting": "Setting"
+  "setting": "Setting",
+  "dark_mode": "Dark Mode",
+  "run_when_starts": "Run When Starts",
+  "reset_when_unlock": "Reset After Unlock"
 }

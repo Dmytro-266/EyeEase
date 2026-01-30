@@ -12,5 +12,8 @@
   "zh": "简体中文",
   "uk": "Українська",
   "pauseHotkey": "设置/隐藏快捷键",
-  "darkMode": "深色模式"
+  "darkMode": "深色模式",
+  "rest_now": "立刻休息",
+  "pause": "暂停",
+  "reset": "重置"
 }
