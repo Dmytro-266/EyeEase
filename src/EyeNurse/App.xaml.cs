@@ -15,14 +15,14 @@ namespace EyeNurse
 {
     public partial class App : Application
     {
-        private readonly NotifyIcon _notifyIcon;
-        private readonly MenuItem _aboutMenuItem;
-        private readonly MenuItem _settingMenuItem;
-        private readonly MenuItem _pauseMenuItem;
-        private readonly MenuItem _resumeMenuItem;
-        private readonly MenuItem _resetMenuItem;
-        private readonly MenuItem _restNowMenuItem;
-        private readonly MenuItem _exitMenuItem;
+        private NotifyIcon? _notifyIcon;
+        private MenuItem? _aboutMenuItem;
+        private MenuItem? _settingMenuItem;
+        private MenuItem? _pauseMenuItem;
+        private MenuItem? _resumeMenuItem;
+        private MenuItem? _resetMenuItem;
+        private MenuItem? _restNowMenuItem;
+        private MenuItem? _exitMenuItem;
 
         public static ContextMenu? Menu { private set; get; }
 
@@ -42,8 +42,16 @@ namespace EyeNurse
 
             var eyeNurseService = IocService.GetService<EyeNurseService>()!;
             eyeNurseService.Init();
+        }
 
+        protected override void OnStartup(StartupEventArgs e)
+        {
+            base.OnStartup(e);
+
+            var eyeNurseService = IocService.GetService<EyeNurseService>()!;
+            
             //初始化托盘，写在构造函数防止空提示
+            // Init tray in OnStartup to ensure Resources are loaded
             string iconPath = Path.Combine(eyeNurseService.ApptEntryDir, "Assets\\Img\\logo.png");
 
             Menu = new()
@@ -90,11 +98,6 @@ namespace EyeNurse
             _notifyIcon.Init();
 
             UpdateNotifyIconText();
-        }
-
-        protected override void OnStartup(StartupEventArgs e)
-        {
-            base.OnStartup(e);
             ShowCountdownWindow();
         }
 
@@ -106,13 +109,13 @@ namespace EyeNurse
 
             _notifyIcon?.Dispatcher.BeginInvoke(() =>
             {
-                _aboutMenuItem.Header = LanService.Get("about");
-                _settingMenuItem.Header = LanService.Get("setting");
-                _pauseMenuItem.Header = LanService.Get("pause");
-                _resumeMenuItem.Header = LanService.Get("resume");
-                _resetMenuItem.Header = LanService.Get("reset");
-                _restNowMenuItem.Header = LanService.Get("rest_now");
-                _exitMenuItem.Header = LanService.Get("exit");
+                if (_aboutMenuItem != null) _aboutMenuItem.Header = LanService.Get("about");
+                if (_settingMenuItem != null) _settingMenuItem.Header = LanService.Get("setting");
+                if (_pauseMenuItem != null) _pauseMenuItem.Header = LanService.Get("pause");
+                if (_resumeMenuItem != null) _resumeMenuItem.Header = LanService.Get("resume");
+                if (_resetMenuItem != null) _resetMenuItem.Header = LanService.Get("reset");
+                if (_restNowMenuItem != null) _restNowMenuItem.Header = LanService.Get("rest_now");
+                if (_exitMenuItem != null) _exitMenuItem.Header = LanService.Get("exit");
             });
         }
 
@@ -129,16 +132,16 @@ namespace EyeNurse
 
         private void ResumeMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            _resumeMenuItem.Visibility = Visibility.Collapsed;
-            _pauseMenuItem.Visibility = Visibility.Visible;
+            if (_resumeMenuItem != null) _resumeMenuItem.Visibility = Visibility.Collapsed;
+            if (_pauseMenuItem != null) _pauseMenuItem.Visibility = Visibility.Visible;
             var vm = IocService.GetService<EyeNurseViewModel>();
             vm?.Resume();
         }
 
         private void PauseMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            _resumeMenuItem.Visibility = Visibility.Visible;
-            _pauseMenuItem.Visibility = Visibility.Collapsed;
+            if (_resumeMenuItem != null) _resumeMenuItem.Visibility = Visibility.Visible;
+            if (_pauseMenuItem != null) _pauseMenuItem.Visibility = Visibility.Collapsed;
             var vm = IocService.GetService<EyeNurseViewModel>();
             vm?.Pause();
         }
