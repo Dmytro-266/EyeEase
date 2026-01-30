@@ -55,6 +55,10 @@ namespace EyeNurse.Views
             int exStyle = (int)GetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE);
             exStyle |= (int)ExtendedWindowStyles.WS_EX_TOOLWINDOW;
             SetWindowLong(wndHelper.Handle, (int)GetWindowLongFields.GWL_EXSTYLE, (IntPtr)exStyle);
+            
+            // Reinitialize hotkeys with real window handle
+            var eyeNurseService = Common.Apps.Services.IocService.GetService<EyeNurse.Services.EyeNurseService>();
+            eyeNurseService?.ReinitializeHotkeys(wndHelper.Handle);
         }
 
         #region Window styles

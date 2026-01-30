@@ -10,8 +10,10 @@ namespace EyeNurse.Services
     {
         private const int WM_HOTKEY = 0x0312;
         private IntPtr _windowHandle;
+        private IntPtr _oldWindowHandle;
         private int _currentId;
         private Dictionary<int, Action> _hotkeyActions = new Dictionary<int, Action>();
+        private bool _isInitialized = false;
 
         [DllImport("user32.dll")]
         private static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, uint vk);
@@ -21,8 +23,24 @@ namespace EyeNurse.Services
 
         public void Initialize(IntPtr windowHandle)
         {
+            // Unregister all hotkeys with old handle first
+            if (_oldWindowHandle != IntPtr.Zero)
+            {
+                foreach (var id in _hotkeyActions.Keys)
+                {
+                    UnregisterHotKey(_oldWindowHandle, id);
+                }
+            }
+            
+            _oldWindowHandle = _windowHandle;
             _windowHandle = windowHandle;
-            ComponentDispatcher.ThreadFilterMessage += ComponentDispatcher_ThreadFilterMessage;
+            
+            // Only subscribe once
+            if (!_isInitialized)
+            {
+                ComponentDispatcher.ThreadFilterMessage += ComponentDispatcher_ThreadFilterMessage;
+                _isInitialized = true;
+            }
         }
 
         public void Register(string hotkeyStr, Action action)
@@ -45,8 +63,16 @@ namespace EyeNurse.Services
                     else if (string.Equals(p, "Win", StringComparison.OrdinalIgnoreCase)) modifiers |= 0x0008;
                     else
                     {
-                        // Parse key
-                        if (Enum.TryParse(p, true, out Key key))
+                        // Parse key - handle numeric keys specially
+                        if (p.Length == 1 && char.IsDigit(p[0]))
+                        {
+                            // For digits 0-9, the Key enum uses D0-D9
+                            if (Enum.TryParse("D" + p, true, out Key key))
+                            {
+                                vk = (uint)KeyInterop.VirtualKeyFromKey(key);
+                            }
+                        }
+                        else if (Enum.TryParse(p, true, out Key key))
                         {
                             vk = (uint)KeyInterop.VirtualKeyFromKey(key);
                         }
@@ -56,10 +82,16 @@ namespace EyeNurse.Services
                 if (vk != 0)
                 {
                     _currentId++;
-                    if (RegisterHotKey(_windowHandle, _currentId, modifiers, vk))
+                    bool result = RegisterHotKey(_windowHandle, _currentId, modifiers, vk);
+                    System.Diagnostics.Debug.WriteLine($"RegisterHotKey for '{hotkeyStr}' (vk={vk}, mod={modifiers}, handle={_windowHandle}): {result}");
+                    if (result)
                     {
                         _hotkeyActions[_currentId] = action;
                     }
+                }
+                else
+                {
+                    System.Diagnostics.Debug.WriteLine($"Failed to parse hotkey: {hotkeyStr}");
                 }
             }
             catch (Exception ex)
@@ -76,6 +108,7 @@ namespace EyeNurse.Services
                 UnregisterHotKey(_windowHandle, id);
             }
             _hotkeyActions.Clear();
+            _currentId = 0;
         }
 
         private void ComponentDispatcher_ThreadFilterMessage(ref MSG msg, ref bool handled)

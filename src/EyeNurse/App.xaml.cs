@@ -39,9 +39,6 @@ namespace EyeNurse
 
             //自定义控件
             //Xaml.CustomMaps.Add(typeof(TitleBar), TitleBar.TitleProperty);
-
-            var eyeNurseService = IocService.GetService<EyeNurseService>()!;
-            eyeNurseService.Init();
         }
 
         protected override void OnStartup(StartupEventArgs e)
@@ -49,6 +46,7 @@ namespace EyeNurse
             base.OnStartup(e);
 
             var eyeNurseService = IocService.GetService<EyeNurseService>()!;
+            eyeNurseService.Init();
             
             //初始化托盘，写在构造函数防止空提示
             // Init tray in OnStartup to ensure Resources are loaded

@@ -74,6 +74,13 @@ namespace EyeNurse.Services
             var appSetting = LoadUserConfig<UserConfigs.Setting>();
             ApplySetting(appSetting);
         }
+        
+        internal void ReinitializeHotkeys(IntPtr windowHandle)
+        {
+            _hotkeyService.Initialize(windowHandle);
+            var appSetting = LoadUserConfig<UserConfigs.Setting>();
+            ApplySetting(appSetting);
+        }
         internal T LoadUserConfig<T>() where T : new()
         {
             var res = _configService.LoadUserConfig<T>();
